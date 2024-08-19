@@ -1,0 +1,68 @@
+@font-face {
+    font-family: "JusticeLeague-25m8";
+    src: url("JusticeLeague-25m8.ttf") format("truetype");
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+    background-color: rgb(133, 190, 228);
+    color: white;
+}
+
+h2{
+    font-family: "JusticeLeague-25m8";
+    font-size: 1.5rem;
+    color: white;
+}
+
+.container{
+    background-color: rgb(133, 190, 228);
+}
+
+#photo{
+    height: 140px;
+    border-radius: 12px;
+}
+
+.tdinput {
+    width: 30%;
+    height: 62px;
+    vertical-align: middle;
+}
+
+.tdradio{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+}
+
+#erreur,
+#valide {
+    visibility: hidden;
+}
+
+#madiv {
+    width: 70%;
+    margin: auto;
+}
+
+.form_error {
+    display: inline-block;
+    color: rgb(226, 46, 46);
+    padding: 10px;
+}
+
+#tdconteneur {
+    text-align: center;
+}
+
+input[type=radio]{
+
+    margin : 0.4rem 0 0.4rem 0;
+}
+
+label[for^="radio"]{
+    margin-left : 0;
+    margin-right: 1rem;
+}

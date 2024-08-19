@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Formulaire C'est mon genre</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+
+            const regEmail = new RegExp(/^([\w-\.]+)@((?:[\w]+\.)+)([a-zA-Z]{2,4})/i);
+            const regDate = new RegExp(/^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i);
+
+            // **********************************************************************************************************
+            // Chargement local du fichier pour photo et preview
+            // param @input : référence à l'objet input type File
+            // param @cible : référence à l'objet cible qui recevra une référence au fichier mis en jeu pour affichage
+            // **********************************************************************************************************
+            function readURL(input, cible) {
+                if (input.files && input.files[0]) {
+                    console.log(input.files[0].type);
+                    let TabExtension = ['image/png', 'image/gif', 'image/jpg', 'image/jpeg'];
+
+                    if (TabExtension.indexOf(input.files[0].type) !== -1) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            console.log(e.target.result);
+                            cible.attr("src", e.target.result);
+                        };
+                        reader.readAsDataURL(input.files[0]);
+                    } else {
+                        alert("Vous devez choisir un fichier de type png/gif/jpg/jpeg");
+                        // Mise à blanc de l'input
+                        $(input).val("");
+                    }
+                }
+            }
+
+            // **********************************************************************************************************
+            // Contrôle de validation des différents champs de Formulaire
+            // param @id_input : référence à l'objet input mis en jeu.
+            // param @regex : expression régulière associée à l'input mis en jeu.
+            // param @msg_vide : message d'erreur lorsque l'input mis en jeu est vide.
+            // param @erreur : message d'erreur lorsque la valeur de l'input mis en jeu n'est pas conforme au pattern
+            // imposé par l'expression régilière @regex.
+            // return valid : Booléen qui permettra de déclencher ou non la soumission du Formulaire.
+            // **********************************************************************************************************
+            function check_form(id_input, regex, msg_vide, erreur) {
+
+                valid = true;
+                if ($("#" + id_input).length === 0)
+                    return false;
+                if ($("#" + id_input).val() === "") {
+                    $("#" + id_input).parent().prev().children("span").fadeIn().text(msg_vide);
+                    valid = false;
+                } else if (!$("#" + id_input).val().match(regex)) {
+                    valid = false;
+                    $("#" + id_input).parent().prev().children("span").fadeIn().text(erreur);
+                } else
+                    $("#" + id_input).parent().prev().children("span").fadeOut();
+                return valid;
+            }
+
+            $("#nom").on("input", function () {
+
+                if ($(this).val().length == 0) {
+                    $(this).css({ // on rend le champ nom rouge
+                        borderColor: 'red',
+                        color: 'red'
+                    });
+                    $(this).parent().prev().children("span").html("Champ Nom requis").fadeIn();
+                } else {
+                    $(this).css({ // on rend le champ nom vert
+                        borderColor: 'green',
+                        color: 'green'
+                    });
+                    $(this).parent().prev().children("span").html("").fadeOut();
+                }
+            });
+
+            $("#prenom").on("input", function () {
+
+                if ($(this).val().length == 0) {
+                    $(this).css({ // on rend le champ nom rouge
+                        borderColor: 'red',
+                        color: 'red'
+                    });
+                    $(this).parent().prev().children("span").html("Champ Prénom requis").fadeIn();
+                } else {
+                    $(this).css({ // on rend le champ nom vert
+                        borderColor: 'green',
+                        color: 'green'
+                    });
+                    $(this).parent().prev().children("span").html("").fadeOut();
+                }
+            });
+
+
+            $("[name=sexe]").on("change", function () {
+
+                alert("Vous avez fait le choix : '" + $(this).val() + "' ... Mais vous pourrez le modifier ultérieurement");
+
+            });
+
+            // Gestionnaire d'évènement sur le champ date
+            $('#datepick').on("input", function () {
+                var re = /(\d{2})[\s . -](\d{2})[\s . -](\d{4})/;
+                // La méthode replace permet de remplacer les différentes sections $1, $2 et $3
+                // qui sont des références respectives à (\d{2}), (\d{2}) et (\d{4}) de l'expression
+                // régulière mise en jeu.
+                var nouvChn = $(this).val().replace(re, "$1/$2/$3");
+                //console.log(nouvChn);
+                console.log($(this).val(nouvChn).length);
+
+                if (!$(this).val().match(regDate)) {
+
+                    $(this).val(nouvChn);
+                    $(this).css({ // on rend le champ date rouge
+                        borderColor: 'red',
+                        color: 'red'
+                    });
+                    $(this).parent().prev().children("span").html("Date pas correcte").fadeIn();
+                } else {
+                    $(this).val(nouvChn);
+                    if ($(this).val(nouvChn).length == 1) {
+                        $(this).css({ // on rend le champ date vert
+                            borderColor: 'green',
+                            color: 'green'
+                        });
+                        $(this).parent().prev().children("span").html("").fadeOut();
+                    }
+
+                }
+            });
+
+            // Gestionnaire d'évènement sur le champ email
+            $('#mail').on("input", function () {
+                if (!$(this).val().match(regEmail)) {
+                    $(this).css({ // on rend le champ mail rouge
+                        borderColor: 'red',
+                        color: 'red'
+                    });
+                    $(this).parent().prev().children("span").html("Adresse mail non valide").fadeIn();
+                } else {
+                    $(this).css({ // on rend le champ mail vert
+                        borderColor: 'green',
+                        color: 'green'
+                    });
+                    $(this).parent().prev().children("span").html("").fadeOut();
+                }
+            });
+
+            // Gestionnaire d'évènement sur le bouton Confirmer
+            $("#cwp_form").on("submit", function () {
+
+                // Création d'une chaîne booléenne qui permettra de valider ou non la soumission du Formulaire.
+                let res = check_form("nom", /^[A-Za-z0-9ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ]{3,}/, "Champ vide", "3 carac min, chiffres et lettres");
+                res = check_form("prenom", /^[A-Za-z0-9ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ]{3,}/, "Champ vide", "3 carac min, chiffres et lettres") && res;
+                res = check_form("datepick", /(\d{2})[\s . - /](\d{2})[\s . - /](\d{4})/, "Champ vide", "Date pas correcte") && res;
+                res = check_form("mail", /^[a-z0-9\-_.]+@[a-z0-9\-_.]+\.[a-z]{2,3}$/i, "Champ vide", "Adresse mail non valide") && res;
+
+                if (res) alert("Confirmez-vous l'envoi des informations ?");
+
+                return res;
+            });
+
+            // Gestionnaire d'évènement sur le bouton Annuler (Solution rapide :  rechargement de la page)
+            $("#reset").on("click", function () {
+                location.reload(true);
+            });
+
+            // Gestionnaire d'évènement sur l'input type File
+            // Permet de donner un apperçu de la photo choisie depuis l'input type File vers
+            // l'emplacement référencé par $(#photo)
+            $("#input_photo").on("change", function () {
+                readURL(this, $("#photo"));
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <form action="#" method="post" id="cwp_form">
+            <div id="madiv">
+                <table class="table table-hover table-bordered table-dark">
+                    <tr>
+                        <td id="tdconteneur"><img id="photo" src="img/noimage.png" alt="photo"></td>
+                        <td>
+                            <label for="input_photo" class="form-label">Charger une photo</label>
+                            <input type="file" class="btn btn-info form-control" id="input_photo" name="photo" accept="image/png, image/jpeg, image/gif, image/jpg">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <h2>QUI ETES VOUS ?</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdinput"><label for="nom">Nom : </label><span class="form_error"></span></td>
+                        <td class="tdinput"><input type="text" id="nom" class="champ" /></td>
+                    </tr>
+                    <tr>
+                        <td class="tdinput"><label for="prenom">Prénom : </label><span class="form_error"></span></td>
+                        <td class="tdinput"><input type="text" id="prenom" class="champ" /></td>
+                    </tr>
+                    <tr>
+                        <td class="tdinput"><label for="date">Date de naissance : </label><span class="form_error"></span></td>
+                        <td class="tdinput"><input type="text" id="datepick" class="champ" placeholder="dd/mm/aaaa" /></td>
+                    </tr>
+                    <tr>
+                        <td class="tdinput"><label for="mail">Email : </label><span class="form_error"></span></td>
+                        <td class="tdinput"><input type="text" id="mail" class="champ" /></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <h2>Quel est votre genre..?</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdradio">
+                            <div class="child">
+                                <input type="radio" id="radio1" name="sexe" value="Femme" checked />
+                                <label for="radio1"> Femme</label>
+                            </div>
+                            <div class="child">
+                                <input type="radio" id="radio2" name="sexe" value="Homme" />
+                                <label for="radio2">Homme</label>
+                            </div>
+                            <div class="child">
+                                <input type="radio" id="radio3" name="sexe" value="Martien">
+                                <label for="radio3">Martien</label>
+                            </div>
+                            <div class="child">
+                                <input type="radio" id="radio4" name="sexe" value="Autre">
+                                <label for="radio4">Autre</label>
+                            </div> 
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" class="btn btn-primary" id="confirme" value="Confirmer" /></td>
+                        <td><input type="reset" class="btn btn-danger" id="reset" value="Annuler"></td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
